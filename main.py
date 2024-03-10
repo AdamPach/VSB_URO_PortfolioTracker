@@ -64,8 +64,37 @@ class MainApp:
         self.amount_label = ttk.Label(self.new_record_form, text="Amount")
         self.amount_insert = ttk.Entry(self.new_record_form, width=40)
 
-        self.amount_label.grid(row=0, sticky=W)
+        FORM_SPACING = (15, 0)
+
+        self.amount_label.grid(row=0, pady=FORM_SPACING, sticky=W)
         self.amount_insert.grid(row=1, sticky=NSEW)
+
+        self.crypto_currency_label = ttk.Label(self.new_record_form, text="Crypto Currency")
+        self.crypto_currency_select = ttk.Combobox(self.new_record_form, values=["BTC", "ETH", "LTC"], width=40)
+
+        self.crypto_currency_label.grid(row=2, pady=FORM_SPACING, sticky=W)
+        self.crypto_currency_select.grid(row=3, sticky=NSEW)
+
+        self.fiat_currency_label = ttk.Label(self.new_record_form, text="Fiat Currency")
+        self.fiat_currency_select = ttk.Combobox(self.new_record_form, values=["CZK", "USD", "EUR"], width=40)
+
+        self.fiat_currency_label.grid(row=4, pady=FORM_SPACING, sticky=W)
+        self.fiat_currency_select.grid(row=5, sticky=NSEW)
+
+        self.prise_label = ttk.Label(self.new_record_form, text="Prise")
+        self.prise_insert = ttk.Entry(self.new_record_form, width=40)
+
+        self.prise_label.grid(row=6, pady=FORM_SPACING, sticky=W)
+        self.prise_insert.grid(row=7, sticky=NSEW)
+
+        self.date_label = ttk.Label(self.new_record_form, text="Date")
+        self.date_insert = ttk.Entry(self.new_record_form, width=40)
+
+        self.date_label.grid(row=8, pady=FORM_SPACING, sticky=W)
+        self.date_insert.grid(row=9, sticky=NSEW)
+
+        self.add_record_button = ttk.Button(self.new_record_form, text="Add record")
+        self.add_record_button.grid(row=10, column=0, pady=(20, 0))
 
         self.new_record_form.pack(fill=BOTH, padx=25, pady=10)
 

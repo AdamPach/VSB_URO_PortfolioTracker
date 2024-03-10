@@ -5,12 +5,16 @@ from tkinter import ttk
 class MainApp:
 
     def __init__(self):
-        self.app = Tk()
+        self.root = Tk()
 
-        self.app.title("Project Tracker")
-        self.app.resizable(width=False, height=False)
+        self.root.title("Project Tracker")
+        self.root.resizable(width=False, height=False)
+
+        self.app = Frame(self.root)
 
         self._init_Treeview()
+
+        self.app.pack(pady=25, padx=25)
 
     def _init_Treeview(self):
         self.main_treeview = ttk.Treeview(self.app,
@@ -44,7 +48,7 @@ class MainApp:
         self.main_treeview.grid(row=0, column=0)
 
     def run(self):
-        self.app.mainloop()
+        self.root.mainloop()
 
 
 app = MainApp()

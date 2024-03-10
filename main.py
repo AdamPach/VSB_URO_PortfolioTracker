@@ -13,6 +13,7 @@ class MainApp:
         self.app = Frame(self.root)
 
         self._init_Treeview()
+        self._init_notebook_menu()
 
         self.app.pack(pady=25, padx=25)
 
@@ -45,7 +46,28 @@ class MainApp:
         self.main_treeview.heading("date", text="Date")
         self.main_treeview.column("date", width=100)
 
-        self.main_treeview.grid(row=0, column=0)
+        self.main_treeview.pack(side=LEFT, fill=BOTH, padx=(0, 20))
+
+    def _init_notebook_menu(self):
+        self.notebook = ttk.Notebook(self.app)
+        self.notebook.pack(side=RIGHT, fill=BOTH, padx=(20, 0))
+
+        self._init_insert_form()
+
+    def _init_insert_form(self):
+        self.new_record_notebook_tab = ttk.Frame(self.notebook, height=400, width=300)
+
+        self.notebook.add(self.new_record_notebook_tab, text="New record")
+
+        self.new_record_form = ttk.Frame(self.new_record_notebook_tab)
+
+        self.amount_label = ttk.Label(self.new_record_form, text="Amount")
+        self.amount_insert = ttk.Entry(self.new_record_form, width=40)
+
+        self.amount_label.grid(row=0, sticky=W)
+        self.amount_insert.grid(row=1, sticky=NSEW)
+
+        self.new_record_form.pack(fill=BOTH, padx=25, pady=10)
 
     def run(self):
         self.root.mainloop()

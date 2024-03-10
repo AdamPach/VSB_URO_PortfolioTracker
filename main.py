@@ -1,5 +1,31 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, messagebox
+
+CRYPTO_CURRENCIES = ["BTC", "ETH", "LTC"]
+FIAT_CURRENCIES = ["CZK", "USD", "EUR"]
+
+class CryptoRecord:
+
+    def __init__(self, record_id, amount, crypto_currency, fiat_currency, fiat_prise, date):
+        self.record_id = record_id
+        self.amount = amount
+        self.crypto_currency = crypto_currency
+        self.fiat_currency = fiat_currency
+        self.fiat_prise = fiat_prise
+        self.date = date
+
+    def is_valid(self):
+
+        try:
+            float(self.amount)
+            float(self.fiat_prise)
+        except ValueError:
+            return False
+
+        if self.fiat_currency not in FIAT_CURRENCIES or self.crypto_currency not in CRYPTO_CURRENCIES:
+            return False
+
+        return True
 
 
 class MainApp:
@@ -14,6 +40,9 @@ class MainApp:
 
         self._init_Treeview()
         self._init_notebook_menu()
+        self._init_menu()
+
+        self.selected_record = None
 
         self.app.pack(pady=25, padx=25)
 
@@ -46,7 +75,23 @@ class MainApp:
         self.main_treeview.heading("date", text="Date")
         self.main_treeview.column("date", width=100)
 
+        self.main_treeview.bind("<<TreeviewSelect>>", self.item_clicked)
+
         self.main_treeview.pack(side=LEFT, fill=BOTH, padx=(0, 20))
+
+    def item_clicked(self, event):
+        selected_item = self.main_treeview.focus()
+
+        if selected_item == '':
+            return
+
+        if selected_item == self.selected_record:
+            decision = messagebox.askyesno("Delete Record", "Are you sure you want to")
+            if not decision:
+                return
+            self.main_treeview.delete(selected_item)
+        else:
+            self.selected_record = selected_item
 
     def _init_notebook_menu(self):
         self.notebook = ttk.Notebook(self.app)
@@ -70,13 +115,13 @@ class MainApp:
         self.amount_insert.grid(row=1, sticky=NSEW)
 
         self.crypto_currency_label = ttk.Label(self.new_record_form, text="Crypto Currency")
-        self.crypto_currency_select = ttk.Combobox(self.new_record_form, values=["BTC", "ETH", "LTC"], width=40)
+        self.crypto_currency_select = ttk.Combobox(self.new_record_form, values=CRYPTO_CURRENCIES, width=40)
 
         self.crypto_currency_label.grid(row=2, pady=FORM_SPACING, sticky=W)
         self.crypto_currency_select.grid(row=3, sticky=NSEW)
 
         self.fiat_currency_label = ttk.Label(self.new_record_form, text="Fiat Currency")
-        self.fiat_currency_select = ttk.Combobox(self.new_record_form, values=["CZK", "USD", "EUR"], width=40)
+        self.fiat_currency_select = ttk.Combobox(self.new_record_form, values=FIAT_CURRENCIES, width=40)
 
         self.fiat_currency_label.grid(row=4, pady=FORM_SPACING, sticky=W)
         self.fiat_currency_select.grid(row=5, sticky=NSEW)
@@ -93,10 +138,45 @@ class MainApp:
         self.date_label.grid(row=8, pady=FORM_SPACING, sticky=W)
         self.date_insert.grid(row=9, sticky=NSEW)
 
-        self.add_record_button = ttk.Button(self.new_record_form, text="Add record")
+        self.add_record_button = ttk.Button(self.new_record_form, text="Add record", command=self.add_record)
         self.add_record_button.grid(row=10, column=0, pady=(20, 0))
 
         self.new_record_form.pack(fill=BOTH, padx=25, pady=10)
+
+    def _init_menu(self):
+        self.top_menu_bar = Menu(self.root)
+
+        self.settings_menu = Menu(self.top_menu_bar, tearoff=0)
+
+        self.top_menu_bar.add_cascade(label="Settings", menu=self.settings_menu)
+
+        self.settings_menu.add_command(label="Quit", command=self.root.quit)
+
+        self.root.config(menu=self.top_menu_bar)
+
+    def add_record(self):
+        record_id = len(self.main_treeview.get_children()) + 1
+        amount = self.amount_insert.get()
+        crypto_currency = self.crypto_currency_select.get()
+        fiat_currency = self.fiat_currency_select.get()
+        fiat_prise = self.prise_insert.get()
+        date = self.date_insert.get()
+
+        new_record = CryptoRecord(record_id, amount, crypto_currency, fiat_currency, fiat_prise, date)
+
+        if not new_record.is_valid():
+            messagebox.showerror("Invalid Record", "Invalid record. Please check the input values.")
+            return
+
+        self.main_treeview.insert("", "end", values=(
+            new_record.record_id, new_record.amount, new_record.crypto_currency, new_record.fiat_currency,
+            new_record.fiat_prise, new_record.date))
+
+        self.amount_insert.delete(0, END)
+        self.crypto_currency_select.delete(0, END)
+        self.fiat_currency_select.delete(0, END)
+        self.prise_insert.delete(0, END)
+        self.date_insert.delete(0, END)
 
     def run(self):
         self.root.mainloop()

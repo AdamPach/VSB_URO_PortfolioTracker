@@ -6,19 +6,19 @@ FIAT_CURRENCIES = ["CZK", "USD", "EUR"]
 
 class CryptoRecord:
 
-    def __init__(self, record_id, amount, crypto_currency, fiat_currency, fiat_prise, date):
+    def __init__(self, record_id, amount, crypto_currency, fiat_currency, fiat_price, date):
         self.record_id = record_id
         self.amount = amount
         self.crypto_currency = crypto_currency
         self.fiat_currency = fiat_currency
-        self.fiat_prise = fiat_prise
+        self.fiat_price = fiat_price
         self.date = date
 
     def is_valid(self):
 
         try:
             float(self.amount)
-            float(self.fiat_prise)
+            float(self.fiat_price)
         except ValueError:
             return False
 
@@ -53,7 +53,7 @@ class MainApp:
                                               "amount",
                                               "crypto_currency",
                                               "fiat_currency",
-                                              "fiat_prise",
+                                              "fiat_price",
                                               "date"),
                                           show='headings')
 
@@ -69,8 +69,8 @@ class MainApp:
         self.main_treeview.heading("fiat_currency", text="Fiat Currency")
         self.main_treeview.column("fiat_currency", width=100)
 
-        self.main_treeview.heading("fiat_prise", text="Fiat Price")
-        self.main_treeview.column("fiat_prise", width=100)
+        self.main_treeview.heading("fiat_price", text="Fiat Price")
+        self.main_treeview.column("fiat_price", width=100)
 
         self.main_treeview.heading("date", text="Date")
         self.main_treeview.column("date", width=100)
@@ -126,11 +126,11 @@ class MainApp:
         self.fiat_currency_label.grid(row=4, pady=FORM_SPACING, sticky=W)
         self.fiat_currency_select.grid(row=5, sticky=NSEW)
 
-        self.prise_label = ttk.Label(self.new_record_form, text="Prise")
-        self.prise_insert = ttk.Entry(self.new_record_form, width=40)
+        self.price_label = ttk.Label(self.new_record_form, text="Price")
+        self.price_insert = ttk.Entry(self.new_record_form, width=40)
 
-        self.prise_label.grid(row=6, pady=FORM_SPACING, sticky=W)
-        self.prise_insert.grid(row=7, sticky=NSEW)
+        self.price_label.grid(row=6, pady=FORM_SPACING, sticky=W)
+        self.price_insert.grid(row=7, sticky=NSEW)
 
         self.date_label = ttk.Label(self.new_record_form, text="Date")
         self.date_insert = ttk.Entry(self.new_record_form, width=40)
@@ -159,10 +159,10 @@ class MainApp:
         amount = self.amount_insert.get()
         crypto_currency = self.crypto_currency_select.get()
         fiat_currency = self.fiat_currency_select.get()
-        fiat_prise = self.prise_insert.get()
+        fiat_price = self.price_insert.get()
         date = self.date_insert.get()
 
-        new_record = CryptoRecord(record_id, amount, crypto_currency, fiat_currency, fiat_prise, date)
+        new_record = CryptoRecord(record_id, amount, crypto_currency, fiat_currency, fiat_price, date)
 
         if not new_record.is_valid():
             messagebox.showerror("Invalid Record", "Invalid record. Please check the input values.")
@@ -170,12 +170,12 @@ class MainApp:
 
         self.main_treeview.insert("", "end", values=(
             new_record.record_id, new_record.amount, new_record.crypto_currency, new_record.fiat_currency,
-            new_record.fiat_prise, new_record.date))
+            new_record.fiat_price, new_record.date))
 
         self.amount_insert.delete(0, END)
         self.crypto_currency_select.delete(0, END)
         self.fiat_currency_select.delete(0, END)
-        self.prise_insert.delete(0, END)
+        self.price_insert.delete(0, END)
         self.date_insert.delete(0, END)
 
     def run(self):

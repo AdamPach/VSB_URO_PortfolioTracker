@@ -28,7 +28,6 @@ class CryptoRecord:
 
         return True
 
-
 class MainApp:
 
     def __init__(self):
@@ -163,6 +162,8 @@ class MainApp:
 
         self.top_menu_bar.add_cascade(label="Settings", menu=self.settings_menu)
 
+        self.top_menu_bar.add_cascade(label="Filter", command=self.open_filter_window)
+
         self.settings_menu.add_command(label="Quit", command=self.root.quit)
 
         self.root.config(menu=self.top_menu_bar)
@@ -203,6 +204,11 @@ class MainApp:
 
     def run(self):
         self.root.mainloop()
+
+    def open_filter_window(self):
+        window = Toplevel(self.root)
+        window.title("Filter")
+        window.grab_set()
 
 
 app = MainApp()

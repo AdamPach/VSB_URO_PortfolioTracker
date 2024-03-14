@@ -4,6 +4,7 @@ from tkinter import ttk, messagebox
 CRYPTO_CURRENCIES = ["BTC", "ETH", "LTC"]
 FIAT_CURRENCIES = ["CZK", "USD", "EUR"]
 
+
 class CryptoRecord:
 
     def __init__(self, record_id, amount, crypto_currency, fiat_currency, fiat_price, date):
@@ -43,6 +44,8 @@ class MainApp:
         self._init_menu()
 
         self.selected_record = None
+
+        self.records = []
 
         self.app.pack(pady=25, padx=25)
 
@@ -89,7 +92,17 @@ class MainApp:
             decision = messagebox.askyesno("Delete Record", "Are you sure you want to")
             if not decision:
                 return
-            self.main_treeview.delete(selected_item)
+
+            record_id = self.main_treeview.item(self.selected_record)['values'][0]
+            new_arr = []
+
+            for record in self.records:
+                if record.record_id != record_id:
+                    new_arr.append(record)
+
+            self.records = new_arr
+
+            self._add_records()
         else:
             self.selected_record = selected_item
 
@@ -155,7 +168,7 @@ class MainApp:
         self.root.config(menu=self.top_menu_bar)
 
     def add_record(self):
-        record_id = len(self.main_treeview.get_children()) + 1
+        record_id = 1 if len(self.main_treeview.get_children()) == 0 else self.main_treeview.item(self.main_treeview.get_children()[-1])['values'][0] + 1
         amount = self.amount_insert.get()
         crypto_currency = self.crypto_currency_select.get()
         fiat_currency = self.fiat_currency_select.get()
@@ -168,15 +181,25 @@ class MainApp:
             messagebox.showerror("Invalid Record", "Invalid record. Please check the input values.")
             return
 
-        self.main_treeview.insert("", "end", values=(
-            new_record.record_id, new_record.amount, new_record.crypto_currency, new_record.fiat_currency,
-            new_record.fiat_price, new_record.date))
+        self.records.append(new_record)
+
+        self._add_records()
 
         self.amount_insert.delete(0, END)
         self.crypto_currency_select.delete(0, END)
         self.fiat_currency_select.delete(0, END)
         self.price_insert.delete(0, END)
         self.date_insert.delete(0, END)
+
+    def _add_records(self):
+
+        for i in self.main_treeview.get_children():
+            self.main_treeview.delete(i)
+
+        for record in self.records:
+            self.main_treeview.insert("", "end", values=(
+                record.record_id, record.amount, record.crypto_currency, record.fiat_currency,
+                record.fiat_price, record.date))
 
     def run(self):
         self.root.mainloop()
